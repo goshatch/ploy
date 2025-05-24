@@ -1,7 +1,7 @@
 {-# LANGUAGE DerivingStrategies #-}
 {-# LANGUAGE OverloadedStrings #-}
 
-module SchemeTypes (LispVal(..), showVal) where
+module SchemeTypes (LispVal (..), showVal) where
 
 import Data.Text (Text)
 import Data.Text qualified as T
@@ -24,21 +24,25 @@ data LispVal
     Bool !Bool
   | -- | The empty list '()
     Nil
-  deriving stock (Eq) -- We can compare LispVals for equality?
+  deriving stock (Eq, Show, Ord) -- We can compare LispVals for =/>/< etc?
 
 -- | Convert a LispVal to its textual representation
 -- This is how values are displayed in the REPL
 showVal :: LispVal -> Text
-showVal (Atom name) = name
-showVal (String txt) = "\"" <> txt <> "\""
-showVal (Number n) = T.pack (show n)
-showVal (Bool True) = "#t"
-showVal (Bool False) = "#f"
-showVal Nil = "()"
-showVal (List vals) = "(" <> T.unwords (map showVal vals) <> ")"
-showVal (DottedList heads tails) =
-  "(" <> T.unwords (map showVal heads) <> " . " <> showVal tails <> ")"
+showVal = \case
+  Atom name -> name
+  String txt -> "\"" <> txt <> "\""
+  Number n -> T.pack (show n)
+  Bool True -> "#t"
+  Bool False -> "#f"
+  Nil -> "()"
+  List vals -> "(" <> T.unwords (map showVal vals) <> ")"
+  DottedList heads tails ->
+    "(" <> T.unwords (map showVal heads) <> " . " <> showVal tails <> ")"
+
+-- NOTE: Instead of deriving stock Show, we can implement our own. This will
+-- print using showVal, so output will look like Scheme code.
 
 -- Make LispVal an instance of Show for debugging
-instance Show LispVal where
-  show = T.unpack . showVal
+-- instance Show LispVal where
+--   show = T.unpack . showVal
