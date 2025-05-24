@@ -79,6 +79,8 @@ parseQuoted = do
   x <- parseExpr
   return $ List [Atom "quote", x]
 
+-- TODO: unquoted expressions, quasiquoted expressions
+
 -- | Main expression parser
 -- Tries each type of expression in turn
 parseExpr :: Parser LispVal
