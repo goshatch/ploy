@@ -40,9 +40,7 @@ parens = between (symbol "(") (symbol ")")
 -- | Parse a number
 -- For now, just positive integers
 parseNumber :: Parser LispVal
-parseNumber = lexeme $ do
-  digits <- some digitChar -- Parse one or more digits
-  return $ Number (read digits)
+parseNumber = lexeme $ Number <$> L.decimal
 
 -- | Parse a string literal
 parseString :: Parser LispVal

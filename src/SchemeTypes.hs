@@ -10,18 +10,18 @@ import Data.Text qualified as T
 -- Each constructor represents a different type of value in Ploy
 data LispVal
   = -- | A symbol, like 'foo or 'bar
-    Atom Text
+    Atom !Text
   | -- | A proper list: (1 2 3)
     List [LispVal]
   | -- | An improper list: (1 2 . 3)
-    DottedList [LispVal] LispVal
+    DottedList [LispVal] !LispVal
   | -- | A whole number
     -- TODO: Float support
-    Number Integer
+    Number !Integer
   | -- | A string literal
-    String Text
+    String !Text
   | -- | #t or #f
-    Bool Bool
+    Bool !Bool
   | -- | The empty list '()
     Nil
   deriving stock (Eq) -- We can compare LispVals for equality?
