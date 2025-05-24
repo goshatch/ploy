@@ -23,6 +23,7 @@ dependencies:
     - base >= 4.7 && < 5
     - text # efficient text processing
     - megaparsec >= 9.0 # parser combinator library
+    - parser-combinators # Additional parser utilities
     - containers # Map, Set, etc.
     - mtl # Monad transformer library
 
@@ -40,8 +41,6 @@ ghc-options:
 default-extensions:
     - OverloadedStrings # Allows string literals for Text
     - DerivingStrategies # Explicit deriving strategies
-    - DeriveGeneric # Deriving Generic instances
-    - DeriveAnyClass # Deriving any class
     - LambdaCase # \case syntax
     - RecordWildCards # {..} syntax for records
     - NamedFieldPuns # Convenient record access
