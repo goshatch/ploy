@@ -37,10 +37,12 @@ symbol = L.symbol spaceConsumer
 parens :: Parser a -> Parser a
 parens = between (symbol "(") (symbol ")")
 
--- | Parse a number
--- For now, just positive integers
+-- | Parse an integer number
+-- The `signed` combinator handles optional +/- prefix
 parseNumber :: Parser LispVal
-parseNumber = lexeme $ Number <$> L.decimal
+parseNumber = do
+  n <- lexeme $ L.signed spaceConsumer L.decimal
+  return (Number n)
 
 -- | Parse a string literal
 parseString :: Parser LispVal
