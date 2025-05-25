@@ -27,6 +27,7 @@ library
   exposed-modules:
       Lib
       Parser
+      SchemeError
       SchemeTypes
   other-modules:
       Paths_ploy
