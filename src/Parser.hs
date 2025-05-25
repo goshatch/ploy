@@ -110,3 +110,10 @@ parseSingle = parse (spaceConsumer *> parseExpr <* eof) "<input>"
 -- | Parse multiple expressions (use this for source files)
 parseMultiple :: Text -> Either (ParseErrorBundle Text Void) [LispVal]
 parseMultiple = parse parseProgram "<input>"
+
+-- | For use in the REPL later
+-- parserHelper :: Parser a -> Text -> Either Text a
+-- parserHelper p input =
+--   case parse p "<input>" input of
+--     Left err -> Left $ T.pack $ errorBundlePretty err
+--     Right val -> Right val
