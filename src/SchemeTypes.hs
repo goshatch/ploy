@@ -5,6 +5,8 @@ module SchemeTypes (LispVal (..), showVal) where
 
 import Data.Text (Text)
 import Data.Text qualified as T
+import Environment (EnvRef)
+import SchemeError (IOThrowsError)
 
 -- | Core data type representing any Scheme value
 -- Each constructor represents a different type of value in Ploy
@@ -24,6 +26,9 @@ data LispVal
     Bool !Bool
   | -- | The empty list '()
     Nil
+  | PrimitiveFunc ([LispVal] -> IOThrowsError Lispval)
+  | -- | Params, body, closure
+    Function [Text] LispVal EnvRef
   deriving stock (Eq, Show, Ord) -- We can compare LispVals for =/>/< etc?
 
 -- | Convert a LispVal to its textual representation
