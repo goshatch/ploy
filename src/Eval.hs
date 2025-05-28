@@ -5,8 +5,8 @@ import Control.Monad.IO.Class
 import Data.Map.Strict qualified as Map
 import Data.Text (Text)
 import Environment
-import Types (EnvRef, IOThrowsError, LispVal (..), showVal)
 import SchemeError
+import Types (EnvRef, IOThrowsError, LispVal (..), showVal)
 
 eval :: EnvRef -> LispVal -> IOThrowsError LispVal
 eval envRef = \case
@@ -15,9 +15,21 @@ eval envRef = \case
   val@(Number _) -> return val
   val@(Bool _) -> return val
   Nil -> return Nil
+
+  -- Variable reference
   Atom var -> do
     result <- getVar envRef var
     liftThrows result
+
+  -- Special forms
+  List [Atom "quote", val] ->
+    return val
+
+  List [Atom "if", pred, conseq, alt] -> do
+    result <- eval envRef pred
+    case result of
+      Bool False -> eval envRef alt
+      _ -> eval envRef conseq
 
   -- TODO: Various other Atoms
 
