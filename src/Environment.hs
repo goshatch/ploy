@@ -12,7 +12,6 @@ where
 
 import Control.Monad.IO.Class
 import Data.IORef
-import Data.Map.Strict (Map)
 import Data.Map.Strict qualified as Map
 import Data.Text (Text)
 import Types (Env, EnvRef (..), LispVal (..), SchemeError (..), ThrowsError)

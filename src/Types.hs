@@ -6,7 +6,7 @@ module Types
     IOThrowsError,
     EnvRef (..),
     Env,
-    showVal
+    showVal,
   )
 where
 
@@ -37,14 +37,12 @@ data LispVal
     Function [Text] LispVal EnvRef
   | -- | The empty list '()
     Nil
-  deriving stock (Show)
 
 -- NOTE: Instead of deriving stock Show, we can implement our own. This will
 -- print using showVal, so output will look like Scheme code.
-
 -- Make LispVal an instance of Show for debugging
--- instance Show LispVal where
---   show = T.unpack . showVal
+instance Show LispVal where
+  show = T.unpack . showVal
 
 -- | Convert a LispVal to its textual representation
 -- This is how values are displayed in the REPL
@@ -84,7 +82,7 @@ data SchemeError
     DivisionByZero
   | -- | Generic error w/ message
     Default !Text
-  deriving stock (Show, Eq)
+  deriving stock (Show)
 
 -- | This is a type alias for operations that might fail
 -- `Either SchemeError a` means the operation will either produce an error or a
