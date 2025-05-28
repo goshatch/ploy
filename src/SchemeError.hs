@@ -18,26 +18,8 @@ where
 import Control.Monad.Except
 import Data.Text (Text)
 import Data.Text qualified as T
-import SchemeTypes
-
-data SchemeError
-  = -- | Wrong number of args
-    NumArgs !Integer ![LispVal]
-  | -- | Expected one type but got another
-    TypeMismatch !Text !LispVal
-  | -- | Parse error (w/ error message)
-    Parser !Text
-  | -- | Malformed special form syntax
-    BadSpecialForm !Text !LispVal
-  | -- | Tried to call something that's not a function
-    NotFunction !Text !Text
-  | -- | Referenced an undefined var
-    UnboundVar !Text !Text
-  | -- | Tried to divide by zero
-    DivisionByZero
-  | -- | Generic error w/ message
-    Default !Text
-  deriving stock (Show, Eq)
+import Types (LispVal, SchemeError(..), ThrowsError, IOThrowsError)
+import SchemeTypes (showVal)
 
 -- | Print errors in a user-friendly way
 showError :: SchemeError -> Text
@@ -63,15 +45,6 @@ showError = \case
     msg <> ": " <> varname
   DivisionByZero -> "Division by zero!"
   Default msg -> msg
-
--- | This is a type alias for operations that might fail
--- `Either SchemeError a` means the operation will either produce an error or a
--- value of type 'a'
-type ThrowsError = Either SchemeError
-
--- | Type for IO operations that might fail
--- `ExceptT` is a monad transformer that adds error handling to IO
-type IOThrowsError = ExceptT SchemeError IO
 
 -- | Lift a `ThrowsError` into `IOThrowsError`
 -- This converts pure errors into IO errors.

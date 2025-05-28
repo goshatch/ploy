@@ -1,9 +1,7 @@
 {-# LANGUAGE ImportQualifiedPost #-}
 
 module Environment
-  ( Env,
-    EnvRef,
-    emptyEnv,
+  ( emptyEnv,
     makeEnvRef,
     getVar,
     setVar,
@@ -17,16 +15,7 @@ import Data.IORef
 import Data.Map.Strict (Map)
 import Data.Map.Strict qualified as Map
 import Data.Text (Text)
-import SchemeError
-import SchemeTypes
-
--- | An environment maps variable names to values
-type Env = Map Text LispVal
-
--- | A mutable reference to an environment
--- IORef is kind of like an atom in Clojure
--- https://hackage.haskell.org/package/base-4.21.0.0/docs/Data-IORef.html
-newtype EnvRef = EnvRef (IORef Env)
+import Types (Env, EnvRef (..), LispVal (..), SchemeError (..), ThrowsError)
 
 -- | Create an empty environment
 emptyEnv :: Env
