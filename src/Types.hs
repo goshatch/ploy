@@ -6,6 +6,7 @@ module Types
     IOThrowsError,
     EnvRef (..),
     Env,
+    showVal
   )
 where
 
@@ -13,6 +14,7 @@ import Control.Monad.Except
 import Data.IORef
 import Data.Map.Strict (Map)
 import Data.Text (Text)
+import Data.Text qualified as T
 
 -- | Core data type representing any Scheme value
 -- Each constructor represents a different type of value in Ploy
@@ -43,6 +45,23 @@ data LispVal
 -- Make LispVal an instance of Show for debugging
 -- instance Show LispVal where
 --   show = T.unpack . showVal
+
+-- | Convert a LispVal to its textual representation
+-- This is how values are displayed in the REPL
+showVal :: LispVal -> Text
+showVal = \case
+  Atom name -> name
+  String txt -> "\"" <> txt <> "\""
+  Number n -> T.pack (show n)
+  Bool True -> "#t"
+  Bool False -> "#f"
+  Nil -> "()"
+  List vals -> "(" <> T.unwords (map showVal vals) <> ")"
+  DottedList heads tails ->
+    "(" <> T.unwords (map showVal heads) <> " . " <> showVal tails <> ")"
+  PrimitiveFunc _ -> "<primitive>"
+  Function params _ _ ->
+    "<procedure:(" <> T.intercalate " " params <> ")>"
 
 type Env = Map Text LispVal
 

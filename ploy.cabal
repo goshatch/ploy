@@ -30,7 +30,6 @@ library
       Lib
       Parser
       SchemeError
-      SchemeTypes
       Types
   other-modules:
       Paths_ploy

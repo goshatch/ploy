@@ -18,8 +18,7 @@ where
 import Control.Monad.Except
 import Data.Text (Text)
 import Data.Text qualified as T
-import Types (LispVal, SchemeError(..), ThrowsError, IOThrowsError)
-import SchemeTypes (showVal)
+import Types (IOThrowsError, LispVal, SchemeError (..), ThrowsError, showVal)
 
 -- | Print errors in a user-friendly way
 showError :: SchemeError -> Text

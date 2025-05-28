@@ -6,7 +6,7 @@ module Parser (parseSingle, parseMultiple) where
 import Data.Text (Text)
 import Data.Text qualified as T
 import Data.Void (Void)
-import SchemeTypes
+import Types
 import Text.Megaparsec
 import Text.Megaparsec.Char
 import Text.Megaparsec.Char.Lexer qualified as L
