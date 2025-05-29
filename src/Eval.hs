@@ -9,6 +9,9 @@ import Environment
 import SchemeError
 import Types (EnvRef, LispVal (..), showVal)
 
+-- one-liner for testing:
+-- let testPrimitive code = do { env <- primitiveEnv; either (putStrLn . ("Parse error: " ++) . show) (\expr -> runIOThrows (eval env expr) >>= print) (parseSingle (T.pack code)) }
+
 eval :: EnvRef -> LispVal -> IOThrowsError LispVal
 eval envRef = \case
   -- Self-evaluating forms
@@ -31,8 +34,33 @@ eval envRef = \case
       -- we are pattern-matching on `_other` here because in Scheme, anything
       -- that is not explicityly #f is considered truthy.
       _other -> eval envRef conseq
+  List [Atom "define", Atom var, expr] -> do
+    value <- eval envRef expr
+    liftIO $ defineVar envRef var value
+  List [Atom "set!", Atom var, expr] -> do
+    value <- eval envRef expr
+    result <- setVar envRef var value
+    liftThrows result
 
-  -- TODO: Various other Atoms
+  -- | `let` will evaluate all bindings, then create a new environment with the
+  -- | evaluated bindings, then evaluate the body in the new environment.
+  List [Atom "let", List bindings, body] -> do
+    evaledBindings <- mapM evalBinding bindings
+    newEnv <- liftIO $ bindVars envRef evaledBindings
+    eval newEnv body
+    where
+      evalBinding = \case
+        List [Atom var, expr] -> do
+          val <- eval envRef expr
+          return (var, val)
+        bad -> throwError $ BadSpecialForm "Bad let binding" bad
+  List [Atom "lambda", List params, body] -> do
+    paramNames <- mapM extractVarName params
+    return $ Function paramNames body envRef
+    where
+      extractVarName = \case
+        Atom name -> return name
+        bad -> throwError $ TypeMismatch "atom" bad
 
   -- Function application
   List (func : args) -> do
