@@ -42,8 +42,8 @@ eval envRef = \case
     result <- setVar envRef var value
     liftThrows result
 
-  -- | `let` will evaluate all bindings, then create a new environment with the
-  -- | evaluated bindings, then evaluate the body in the new environment.
+  -- \| `let` will evaluate all bindings, then create a new environment with the
+  -- \| evaluated bindings, then evaluate the body in the new environment.
   List [Atom "let", List bindings, body] -> do
     evaledBindings <- mapM evalBinding bindings
     newEnv <- liftIO $ bindVars envRef evaledBindings
@@ -91,10 +91,64 @@ apply = \case
 -- | Primitive functions
 primitives :: [(Text, [LispVal] -> IOThrowsError LispVal)]
 primitives =
-  [ -- Type predicates
+  [ -- Arithmetic
+    ("+", numericBinop (+)),
+    ("-", numericBinop (-)),
+    ("*", numericBinop (*)),
+    ("/", integerDivop),
+    ("mod", numericBinop mod),
+    ("quotient", numericBinop quot),
+    ("remainder", numericBinop rem),
+    -- Comparison
+    ("=", numBoolBinop (==)),
+    ("<", numBoolBinop (<)),
+    (">", numBoolBinop (>)),
+    ("<=", numBoolBinop (<=)),
+    (">=", numBoolBinop (>=)),
+    -- Type predicates
     ("number?", isNumber),
     ("string?", isString)
   ]
+
+numericBinop ::
+  (Integer -> Integer -> Integer) ->
+  [LispVal] ->
+  IOThrowsError LispVal
+numericBinop op = \case
+  [] -> throwError $ NumArgs 2 []
+  [_] -> throwError $ NumArgs 2 []
+  args -> do
+    nums <- mapM unpackNum args
+    return $ Number $ foldl1 op nums
+
+-- | Integer division with div-by-zero check
+integerDivop :: [LispVal] -> IOThrowsError LispVal
+integerDivop = \case
+  [a, Number 0] -> throwError DivisionByZero
+  [a, b] -> numericBinop div [a, b]
+  args -> throwError $ NumArgs 2 args
+
+-- | Helper: lift numeric comparison
+numBoolBinop ::
+  (Integer -> Integer -> Bool) ->
+  [LispVal] ->
+  IOThrowsError LispVal
+numBoolBinop op = \case
+  [Number a, Number b] -> return $ Bool $ op a b
+  [a, b] ->
+    throwError $
+      TypeMismatch "number" $
+        if not (isNum a) then a else b
+  args -> throwError $ NumArgs 2 args
+  where
+    isNum (Number _) = True
+    isNum _ = False
+
+-- | Extract number from LispVal
+unpackNum :: LispVal -> IOThrowsError Integer
+unpackNum = \case
+  Number n -> return n
+  val -> throwError $ TypeMismatch "number" val
 
 isNumber :: [LispVal] -> IOThrowsError LispVal
 isNumber = \case
