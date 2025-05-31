@@ -107,7 +107,9 @@ primitives =
     (">=", numBoolBinop (>=)),
     -- Type predicates
     ("number?", isNumber),
-    ("string?", isString)
+    ("string?", isString),
+    ("symbol?", isSymbol),
+    ("boolean?", isBoolean)
   ]
 
 numericBinop ::
@@ -159,6 +161,18 @@ isNumber = \case
 isString :: [LispVal] -> IOThrowsError LispVal
 isString = \case
   [String _] -> return $ Bool True
+  [_] -> return $ Bool False
+  args -> throwError $ NumArgs 1 args
+
+isSymbol :: [LispVal] -> IOThrowsError LispVal
+isSymbol = \case
+  [Atom _] -> return $ Bool True
+  [_] -> return $ Bool False
+  args -> throwError $ NumArgs 1 args
+
+isBoolean :: [LispVal] -> IOThrowsError LispVal
+isBoolean = \case
+  [Bool _] -> return $ Bool True
   [_] -> return $ Bool False
   args -> throwError $ NumArgs 1 args
 
