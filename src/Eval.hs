@@ -105,6 +105,9 @@ primitives =
     (">", numBoolBinop (>)),
     ("<=", numBoolBinop (<=)),
     (">=", numBoolBinop (>=)),
+    -- List operations
+    ("car", car),
+    ("cdr", cdr),
     -- Type predicates
     ("number?", isNumber),
     ("string?", isString),
@@ -151,6 +154,24 @@ unpackNum :: LispVal -> IOThrowsError Integer
 unpackNum = \case
   Number n -> return n
   val -> throwError $ TypeMismatch "number" val
+
+-- List operations
+car :: [LispVal] -> IOThrowsError LispVal
+car = \case
+  [List (x : xs)] -> return x
+  [List []] -> throwError $ Default "Empty list"
+  [DottedList (x : xs) _] -> return x
+  [arg] -> throwError $ TypeMismatch "pair" arg
+  args -> throwError $ NumArgs 1 args
+
+cdr :: [LispVal] -> IOThrowsError LispVal
+cdr = \case
+  [List (_ : xs)] -> return xs
+  [List []] -> throwError $ Default "Empty list"
+  [DottedList [_] x] -> return x
+  [DottedList (_ : xs) x] -> return $ DottedList xs x
+  [arg] -> throwError $ TypeMismatch "pair" arg
+  args -> throwError $ NumArgs 1 args
 
 isNumber :: [LispVal] -> IOThrowsError LispVal
 isNumber = \case
