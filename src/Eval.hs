@@ -1,6 +1,6 @@
 module Eval (eval, primitiveEnv) where
 
-import Control.Monad (when)
+import Control.Monad
 import Control.Monad.Except
 import Control.Monad.IO.Class (MonadIO (liftIO))
 import Data.Map.Strict qualified as Map
@@ -115,7 +115,11 @@ primitives =
     ("number?", isNumber),
     ("string?", isString),
     ("symbol?", isSymbol),
-    ("boolean?", isBoolean)
+    ("boolean?", isBoolean),
+    -- Equality
+    ("eq?", eqv),
+    ("eqv?", eqv),
+    ("equal?", equal)
   ]
 
 numericBinop ::
@@ -221,6 +225,35 @@ isBoolean = \case
   [Bool _] -> return $ Bool True
   [_] -> return $ Bool False
   args -> throwError $ NumArgs 1 args
+
+-- Equality operations
+eqv :: [LispVal] -> IOThrowsError LispVal
+eqv = \case
+  [Bool a, Bool b] -> return $ Bool $ a == b
+  [Number a, Number b] -> return $ Bool $ a == b
+  [String a, String b] -> return $ Bool $ a == b
+  [Atom a, Atom b] -> return $ Bool $ a == b
+  [Nil, Nil] -> return $ Bool True
+  [List [], List []] -> return $ Bool True
+  [_, _] -> return $ Bool False
+  args -> throwError $ NumArgs 2 args
+
+equal :: [LispVal] -> IOThrowsError LispVal
+equal = \case
+  [arg1, arg2] -> do
+    -- first, try eqv?
+    primitiveEquals <- eqv [arg1, arg2]
+    case primitiveEquals of
+      Bool True -> return $ Bool True
+      _other -> case (arg1, arg2) of
+        (List xs, List ys) ->
+          if length xs /= length ys
+          then return $ Bool False
+          else do
+            results <- zipWithM (\x y -> equal [x, y]) xs ys
+            return $ Bool $ all (== Bool True) results
+        _other -> return $ Bool False
+  args -> throwError $ NumArgs 2 args
 
 -- | Create initial environment with primitives
 primitiveEnv :: IO EnvRef
