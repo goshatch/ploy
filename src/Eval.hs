@@ -110,6 +110,8 @@ primitives =
     ("cdr", cdr),
     ("cons", cons),
     -- Type predicates
+    ("null?", isNull),
+    ("list?", isList),
     ("number?", isNumber),
     ("string?", isString),
     ("symbol?", isSymbol),
@@ -181,6 +183,20 @@ cons = \case
   [x, DottedList xs xlast] -> return $ DottedList (x : xs) xlast
   [x, y] -> return $ DottedList [x] y
   args -> throwError $ NumArgs 2 args
+
+isNull :: [LispVal] -> IOThrowsError LispVal
+isNull = \case
+  [Nil] -> return $ Bool True
+  [List []] -> return $ Bool True
+  [_] -> return $ Bool False
+  args -> throwError $ NumArgs 1 args
+
+isList :: [LispVal] -> IOThrowsError LispVal
+isList = \case
+  [List _] -> return $ Bool True
+  [Nil] -> return $ Bool True
+  [_] -> return $ Bool False
+  args -> throwError $ NumArgs 1 args
 
 isNumber :: [LispVal] -> IOThrowsError LispVal
 isNumber = \case
