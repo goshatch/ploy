@@ -108,6 +108,7 @@ primitives =
     -- List operations
     ("car", car),
     ("cdr", cdr),
+    ("cons", cons),
     -- Type predicates
     ("number?", isNumber),
     ("string?", isString),
@@ -172,6 +173,14 @@ cdr = \case
   [DottedList (_ : xs) x] -> return $ DottedList xs x
   [arg] -> throwError $ TypeMismatch "pair" arg
   args -> throwError $ NumArgs 1 args
+
+cons :: [LispVal] -> IOThrowsError LispVal
+cons = \case
+  [x, Nil] -> return $ List [x]
+  [x, List xs] -> return $ List (x : xs)
+  [x, DottedList xs xlast] -> return $ DottedList (x : xs) xlast
+  [x, y] -> return $ DottedList [x] y
+  args -> throwError $ NumArgs 2 args
 
 isNumber :: [LispVal] -> IOThrowsError LispVal
 isNumber = \case
