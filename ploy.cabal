@@ -28,7 +28,6 @@ library
       Environment
       ErrorHandling
       Eval
-      Lib
       Parser
       Repl
       Types
