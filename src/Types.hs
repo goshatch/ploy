@@ -46,6 +46,21 @@ data LispVal
   | -- | The empty list '()
     Nil
 
+instance Eq LispVal where
+  (Atom a) == (Atom b) = a == b
+  (List a) == (List b) = a == b
+  (DottedList a1 b1) == (DottedList a2 b2) = a1 == a2 && b1 == b2
+  (Number a) == (Number b) = a == b
+  (String a) == (String b) = a == b
+  (Bool a) == (Bool b) = a == b
+  Nil == Nil = True
+  -- Functions are never equal
+  -- TODO: maybe compare by reference in future?
+  (PrimitiveFunc _) == (PrimitiveFunc _) = False
+  (Function {}) == (Function {}) = False
+  -- Everything else is never equal
+  _ == _ = False
+
 -- NOTE: Instead of deriving stock Show, we can implement our own. This will
 -- print using showVal, so output will look like Scheme code.
 -- Make LispVal an instance of Show for debugging
