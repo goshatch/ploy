@@ -6,7 +6,7 @@ import Control.Monad.IO.Class (MonadIO (liftIO))
 import Data.Map.Strict qualified as Map
 import Data.Text (Text)
 import Environment
-import SchemeError
+import ErrorHandling
 import Types (EnvRef, LispVal (..), showVal)
 
 -- one-liner for testing:

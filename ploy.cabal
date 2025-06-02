@@ -26,10 +26,10 @@ source-repository head
 library
   exposed-modules:
       Environment
+      ErrorHandling
       Eval
       Lib
       Parser
-      SchemeError
       Types
   other-modules:
       Paths_ploy

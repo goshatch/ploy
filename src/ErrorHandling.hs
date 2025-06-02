@@ -3,12 +3,12 @@
 {-# LANGUAGE OverloadedStrings #-}
 
 -- | Error handling
-module SchemeError
-  ( SchemeError (..),
-    ThrowsError,
+module ErrorHandling
+  ( ThrowsError,
     IOThrowsError,
     throwError,
     catchError,
+    showError,
     liftThrows,
     runIOThrows,
     extractValue,
