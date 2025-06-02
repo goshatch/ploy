@@ -14,7 +14,7 @@ import ErrorHandling
 import Eval
 import Parser
 import System.IO (NewlineMode (inputNL), hFlush, stdout)
-import Text.Megaparsec (errorBundlePretty)
+import Text.Megaparsec (errorBundlePretty, parse)
 import Types
 
 readPrompt :: Text -> IO Text

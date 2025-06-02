@@ -1,7 +1,7 @@
 {-# LANGUAGE OverloadedStrings #-}
 
 -- | Main parser for Ploy!
-module Parser (parseSingle, parseMultiple, parseProgram) where
+module Parser (parseSingle, parseMultiple, parseProgram, parseExpr) where
 
 import Data.Text (Text)
 import Data.Text qualified as T

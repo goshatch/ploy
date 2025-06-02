@@ -7,7 +7,7 @@ import Data.Map.Strict qualified as Map
 import Data.Text (Text)
 import Environment
 import ErrorHandling
-import Types (EnvRef, LispVal (..), showVal)
+import Types (EnvRef, LispVal (..), SchemeError (..), showVal)
 
 -- one-liner for testing:
 -- let testPrimitive code = do { env <- primitiveEnv; either (putStrLn . ("Parse error: " ++) . show) (\expr -> runIOThrows (eval env expr) >>= print) (parseSingle (T.pack code)) }
@@ -173,7 +173,7 @@ car = \case
 
 cdr :: [LispVal] -> IOThrowsError LispVal
 cdr = \case
-  [List (_ : xs)] -> return xs
+  [List (_ : xs)] -> return $ List xs
   [List []] -> throwError $ Default "Empty list"
   [DottedList [_] x] -> return x
   [DottedList (_ : xs) x] -> return $ DottedList xs x
