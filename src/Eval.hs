@@ -248,10 +248,10 @@ equal = \case
       _other -> case (arg1, arg2) of
         (List xs, List ys) ->
           if length xs /= length ys
-          then return $ Bool False
-          else do
-            results <- zipWithM (\x y -> equal [x, y]) xs ys
-            return $ Bool $ all (== Bool True) results
+            then return $ Bool False
+            else do
+              results <- zipWithM (\x y -> equal [x, y]) xs ys
+              return $ Bool $ all (== Bool True) results
         _other -> return $ Bool False
   args -> throwError $ NumArgs 2 args
 

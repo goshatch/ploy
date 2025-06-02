@@ -1,20 +1,15 @@
 {-# LANGUAGE OverloadedStrings #-}
 
 -- | Main parser for Ploy!
-module Parser (parseSingle, parseMultiple) where
+module Parser (parseSingle, parseMultiple, parseProgram) where
 
 import Data.Text (Text)
 import Data.Text qualified as T
 import Data.Void (Void)
-import Types
 import Text.Megaparsec
 import Text.Megaparsec.Char
 import Text.Megaparsec.Char.Lexer qualified as L
-
--- | The type of Ploy's parser
--- Void means we don't have custom error components
--- Text means we're parsing Text input
-type Parser = Parsec Void Text
+import Types
 
 -- | Parse spaces and comments
 -- This handles whitespace between tokens

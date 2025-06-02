@@ -1,6 +1,7 @@
 -- | Base types!
 module Types
-  ( LispVal (..),
+  ( Parser,
+    LispVal (..),
     SchemeError (..),
     ThrowsError,
     IOThrowsError,
@@ -15,6 +16,13 @@ import Data.IORef
 import Data.Map.Strict (Map)
 import Data.Text (Text)
 import Data.Text qualified as T
+import Data.Void (Void)
+import Text.Megaparsec
+
+-- | The type of Ploy's parser
+-- Void means we don't have custom error components
+-- Text means we're parsing Text input
+type Parser = Parsec Void Text
 
 -- | Core data type representing any Scheme value
 -- Each constructor represents a different type of value in Ploy
