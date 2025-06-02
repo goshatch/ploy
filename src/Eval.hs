@@ -37,6 +37,14 @@ eval envRef = \case
   List [Atom "define", Atom var, expr] -> do
     value <- eval envRef expr
     liftIO $ defineVar envRef var value
+  List [Atom "define", List (Atom name : params), body] -> do
+    paramNames <- mapM extractVarName params
+    let func = Function paramNames body envRef
+    liftIO $ defineVar envRef name func
+    where
+      extractVarName = \case
+        Atom name -> return name
+        bad -> throwError $ TypeMismatch "atom" bad
   List [Atom "set!", Atom var, expr] -> do
     value <- eval envRef expr
     result <- setVar envRef var value
