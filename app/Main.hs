@@ -1,6 +1,12 @@
 module Main (main) where
 
-import Lib
+import System.Environment (getArgs)
+import Repl
 
 main :: IO ()
-main = someFunc
+main = do
+  args <- getArgs
+  case args of
+    [] -> runRepl
+    [filename] -> runFile filename
+    _ -> putStrLn "Usage: ploy [filename]"
